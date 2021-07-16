@@ -32,11 +32,13 @@ def play_audio(audio_file: File) -> str:
         return "File not supported (pygame & mp3 don't go along)"
 
 
-def toggle_pause_audio() -> None:
+def toggle_pause_audio() -> str:
     if pygame.mixer.music.get_busy():
         pygame.mixer.music.pause()
+        return "[PAUSED]"
     else:
         pygame.mixer.music.unpause()
+        return "[PLAYING]"
 
 
 def get_supported_audio_files() -> list[File]:
