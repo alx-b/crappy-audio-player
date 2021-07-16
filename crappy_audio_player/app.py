@@ -10,10 +10,15 @@ class PlayerTUI:
         self.artist_menu = self._init_artist_menu()
         self.current_audio = self._init_current_audio()
         self._get_playlist()
+        self._init_keybindings()
+
+    def _init_keybindings(self) -> None:
+        self.root.add_key_command(py_cui.keys.KEY_P_LOWER, self.toggle_pause_audio_file)
 
     def _init_artist_menu(self) -> py_cui.widgets.ScrollMenu:
         menu = self.root.add_scroll_menu("Artists", 0, 0, row_span=8, column_span=8)
         menu.add_key_command(py_cui.keys.KEY_ENTER, self.play_selected_audio_file)
+        menu.add_key_command(py_cui.keys.KEY_P_LOWER, self.toggle_pause_audio_file)
         return menu
 
     def _init_current_audio(self) -> py_cui.widgets.Label:
@@ -27,6 +32,9 @@ class PlayerTUI:
 
     def play_selected_audio_file(self) -> None:
         self.current_audio._title = audio.play_audio(self.artist_menu.get())
+
+    def toggle_pause_audio_file(self) -> None:
+        audio.toggle_pause_audio()
 
 
 if __name__ == "__main__":
