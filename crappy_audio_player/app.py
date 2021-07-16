@@ -2,12 +2,15 @@
 
 import py_cui
 
+import audio
+
 
 class PlayerTUI:
     def __init__(self, root: py_cui.PyCUI):
         self.root = root
         self.artist_menu = self._init_artist_menu()
         self.current_audio = self._init_current_audio()
+        self._get_playlist()
 
     def _init_artist_menu(self) -> py_cui.widgets.ScrollMenu:
         return self.root.add_scroll_menu("Artists", 0, 0, row_span=8, column_span=8)
@@ -16,6 +19,9 @@ class PlayerTUI:
         current_audio = self.root.add_label("", 8, 0, column_span=8)
         current_audio.toggle_border()
         return current_audio
+
+    def _get_playlist(self):
+        self.artist_menu.add_item_list(audio.get_supported_audio_files())
 
 
 if __name__ == "__main__":
