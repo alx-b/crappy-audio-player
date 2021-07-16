@@ -22,12 +22,11 @@ class PlayerTUI:
         return current_audio
 
     # !! might put this in init_artist_menu instead !!
-    def _get_playlist(self):
+    def _get_playlist(self) -> None:
         self.artist_menu.add_item_list(audio.get_supported_audio_files())
 
     def play_selected_audio_file(self) -> None:
-        # !! return into some info display ? !!
-        audio.play_audio(self.artist_menu.get())
+        self.current_audio._title = audio.play_audio(self.artist_menu.get())
 
 
 if __name__ == "__main__":
