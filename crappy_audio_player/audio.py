@@ -23,6 +23,15 @@ class File:
         )
 
 
+def play_audio(audio_file: File) -> str:
+    try:
+        pygame.mixer.music.load(audio_file.path)
+        pygame.mixer.music.play()
+        return str(audio_file)
+    except Exception:
+        return "File not supported (pygame & mp3 don't go along)"
+
+
 def get_supported_audio_files() -> list[File]:
     try:
         return _sort_audio_files(
@@ -48,7 +57,7 @@ def _sort_audio_files(files: list[File]) -> list[File]:
     )
 
 
-def _get_metadata(filepath: pathlib.PosixPath or str):
+def _get_metadata(filepath: pathlib.PosixPath or str) -> mutagen.File or str:
     try:
         return mutagen.File(filepath, options=None, easy=True)
     except Exception:
