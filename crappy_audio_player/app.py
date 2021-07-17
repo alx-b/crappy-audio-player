@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import threading
+import time
+
 import py_cui
 
 import audio
@@ -12,7 +15,11 @@ class PlayerTUI:
         self.status_label = self._init_status_label()
         self._get_playlist()
         self._init_global_keybindings()
-        # self.current_audio: audio.File
+        self.thread_is_alive = False
+        self.thread1 = threading.Thread(
+            target=self.loop_play_audio_files,
+            args=[self.artist_menu.get_selected_item_index()],
+        )
 
     def _init_global_keybindings(self) -> None:
         self.root.add_key_command(py_cui.keys.KEY_P_LOWER, self.toggle_pause_audio_file)
@@ -40,9 +47,39 @@ class PlayerTUI:
     def play_selected_audio_file(self) -> None:
         self.current_audio_label._title = audio.play_audio(self.artist_menu.get())
         self.status_label._title = "[PLAYING]"
+        if self.thread1.is_alive():
+            self.kill_thread()
+        self.create_and_start_new_thread()
+
+    def loop_play_audio_files(self, current_idx):
+        for audio_file in self.artist_menu.get_item_list()[current_idx + 1 : -1]:
+            while self.thread_is_alive:
+                time.sleep(1)
+                if audio.get_audio_end_event():
+                    self.current_audio_label._title = audio.play_audio(audio_file)
+                    break
 
     def toggle_pause_audio_file(self) -> None:
         self.status_label._title = audio.toggle_pause_audio()
+
+    def create_and_start_new_thread(self):
+        self.thread1 = threading.Thread(
+            target=self.loop_play_audio_files,
+            args=[self.artist_menu.get_selected_item_index()],
+        )
+        print("START THREAD")
+        self.thread_is_alive = True
+        self.thread1.start()
+
+    def kill_thread(self):
+        print("KILL THREAD")
+        self.thread_is_alive = False
+        # !! if no music has been played, RuntimeError join() before start()
+        self.thread1.join()
+
+    # def reset_labels(self):
+    #    self.current_audio_label._title = ""
+    #    self.status_label._title = ""
 
 
 if __name__ == "__main__":
@@ -59,5 +96,6 @@ if __name__ == "__main__":
         root = _init_root()
         wrapper = PlayerTUI(root)
         root.start()
+        root.run_on_exit(wrapper.kill_thread())
 
     _start()
