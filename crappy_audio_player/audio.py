@@ -27,6 +27,7 @@ def play_audio(audio_file: File) -> str:
     try:
         pygame.mixer.music.load(audio_file.path)
         pygame.mixer.music.play()
+        pygame.mixer.music.set_endevent(pygame.USEREVENT)
         return str(audio_file)
     except Exception:
         return "File not supported (pygame & mp3 don't go along)"
@@ -86,4 +87,11 @@ def _is_file_loadable(filepath: pathlib.PosixPath or str) -> bool:
         return False
 
 
+def get_audio_end_event():
+    if [event for event in pygame.event.get() if event.type == pygame.USEREVENT]:
+        return True
+    return False
+
+
+pygame.init()
 pygame.mixer.init()
