@@ -13,6 +13,7 @@ class PlayerTUI:
         self.artist_menu = self._init_artist_menu()
         self.current_audio_label = self._init_current_audio_label()
         self.status_label = self._init_status_label()
+        self.playtime_label = self._init_playtime_label()
         self._get_playlist()
         self._init_global_keybindings()
         self.thread_is_alive = False
@@ -31,7 +32,7 @@ class PlayerTUI:
         return menu
 
     def _init_current_audio_label(self) -> py_cui.widgets.Label:
-        current_audio = self.root.add_label("", 8, 1, column_span=7)
+        current_audio = self.root.add_label("", 8, 1, column_span=6)
         current_audio.toggle_border()
         return current_audio
 
@@ -40,12 +41,20 @@ class PlayerTUI:
         label.toggle_border()
         return label
 
+    def _init_playtime_label(self) -> py_cui.widgets.Label:
+        label = self.root.add_label("", 8, 7, column_span=1)
+        label.toggle_border()
+        return label
+
     # !! might put this in init_artist_menu instead !!
     def _get_playlist(self) -> None:
         self.artist_menu.add_item_list(audio.get_supported_audio_files())
 
     def play_selected_audio_file(self) -> None:
-        self.current_audio_label._title = audio.play_audio(self.artist_menu.get())
+        song = audio.play_audio(self.artist_menu.get())
+        self.current_audio_label._title = str(song)
+        self.playtime_label._title = audio.get_audio_length(song)
+        # self.current_audio_label._title = audio.play_audio(self.artist_menu.get())
         self.status_label._title = "[PLAYING]"
         if self.thread1.is_alive():
             self.kill_thread()
@@ -56,7 +65,10 @@ class PlayerTUI:
             while self.thread_is_alive:
                 time.sleep(1)
                 if audio.get_audio_end_event():
-                    self.current_audio_label._title = audio.play_audio(audio_file)
+                    song = audio.play_audio(audio_file)
+                    self.current_audio_label._title = str(song)
+                    self.playtime_label._title = audio.get_audio_length(song)
+                    # self.current_audio_label._title = str(audio.play_audio(audio_file))
                     break
 
     def toggle_pause_audio_file(self) -> None:

@@ -28,7 +28,8 @@ def play_audio(audio_file: File) -> str:
         pygame.mixer.music.load(audio_file.path)
         pygame.mixer.music.play()
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
-        return str(audio_file)
+        return audio_file
+        # return str(audio_file)
     except Exception:
         return "File not supported (pygame & mp3 don't go along)"
 
@@ -91,6 +92,17 @@ def get_audio_end_event() -> bool:
     if [event for event in pygame.event.get() if event.type == pygame.USEREVENT]:
         return True
     return False
+
+
+def get_audio_length(audio_file: File) -> str:
+    try:
+        length = int(audio_file.metadata.info.length)
+        if length > 59:
+            return f"{int(length / 60)}:{str(int(length % 60)).zfill(2)}"
+        else:
+            return f"0:{str(length).zfill(2)}"
+    except Exception:
+        return "cant read length of audio."
 
 
 pygame.init()
