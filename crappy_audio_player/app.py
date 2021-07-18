@@ -51,7 +51,7 @@ class PlayerTUI:
             self.kill_thread()
         self.create_and_start_new_thread()
 
-    def loop_play_audio_files(self, current_idx):
+    def loop_play_audio_files(self, current_idx: int) -> None:
         for audio_file in self.artist_menu.get_item_list()[current_idx + 1 : -1]:
             while self.thread_is_alive:
                 time.sleep(1)
@@ -62,20 +62,20 @@ class PlayerTUI:
     def toggle_pause_audio_file(self) -> None:
         self.status_label._title = audio.toggle_pause_audio()
 
-    def create_and_start_new_thread(self):
+    def create_and_start_new_thread(self) -> None:
         self.thread1 = threading.Thread(
             target=self.loop_play_audio_files,
             args=[self.artist_menu.get_selected_item_index()],
         )
-        print("START THREAD")
+        # print("START THREAD")
         self.thread_is_alive = True
         self.thread1.start()
 
-    def kill_thread(self):
-        print("KILL THREAD")
+    def kill_thread(self) -> None:
+        # print("KILL THREAD")
         self.thread_is_alive = False
-        # !! if no music has been played, RuntimeError join() before start()
-        self.thread1.join()
+        if self.thread1.is_alive():
+            self.thread1.join()
 
     # def reset_labels(self):
     #    self.current_audio_label._title = ""

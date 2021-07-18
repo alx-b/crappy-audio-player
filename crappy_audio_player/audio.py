@@ -87,7 +87,7 @@ def _is_file_loadable(filepath: pathlib.PosixPath or str) -> bool:
         return False
 
 
-def get_audio_end_event():
+def get_audio_end_event() -> bool:
     if [event for event in pygame.event.get() if event.type == pygame.USEREVENT]:
         return True
     return False
