@@ -23,7 +23,7 @@ class File:
         )
 
 
-def play_audio(audio_file: File) -> str:
+def play_audio(audio_file: File) -> File or str:
     try:
         pygame.mixer.music.load(audio_file.path)
         pygame.mixer.music.play()
@@ -72,7 +72,7 @@ def _get_metadata(filepath: pathlib.PosixPath or str) -> mutagen.File or str:
     try:
         return mutagen.File(filepath, options=None, easy=True)
     except Exception:
-        return f"cant read metadata - {filepath}"
+        return f"can't read metadata - {filepath}"
 
 
 def _get_filepaths(main_path: str) -> list[pathlib.PosixPath]:
@@ -102,7 +102,7 @@ def get_audio_length(audio_file: File) -> str:
         else:
             return f"0:{str(length).zfill(2)}"
     except Exception:
-        return "cant read length of audio."
+        return "can't read length of audio."
 
 
 pygame.init()
